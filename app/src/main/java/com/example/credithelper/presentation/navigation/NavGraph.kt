@@ -14,6 +14,7 @@ import androidx.navigation.navArgument
 import com.example.credithelper.di.AppModule
 import com.example.credithelper.presentation.dashboard.DashboardScreen
 import com.example.credithelper.presentation.debtdetail.DebtDetailScreen
+import com.example.credithelper.presentation.repaydebt.RepayDebtScreen
 import com.example.credithelper.presentation.debts.DebtsScreen
 import com.example.credithelper.presentation.incomedetail.IncomeDetailScreen
 import com.example.credithelper.presentation.incomes.IncomesScreen
@@ -24,6 +25,9 @@ sealed class Screen(val route: String) {
     data object Debts : Screen("debts")
     data object DebtDetail : Screen("debts/{debtId}") {
         fun createRoute(debtId: Long) = "debts/$debtId"
+    }
+    data object RepayDebt : Screen("debts/{debtId}/repay") {
+        fun createRoute(debtId: Long) = "debts/$debtId/repay"
     }
     data object IncomeDetail : Screen("incomes/{incomeId}") {
         fun createRoute(incomeId: Long) = "incomes/$incomeId"
@@ -93,6 +97,24 @@ fun NavGraph(
             )
             DebtDetailScreen(
                 viewModel = viewModel,
+                onBack = { navController.popBackStack() },
+                onNavigateToRepay = { navController.navigate(Screen.RepayDebt.createRoute(debtId)) }
+            )
+        }
+        composable(
+            route = Screen.RepayDebt.route,
+            arguments = listOf(navArgument("debtId") { type = NavType.LongType })
+        ) { backStackEntry ->
+            val repayDebtId = backStackEntry.arguments?.getLong("debtId") ?: 0L
+            val repayViewModel: com.example.credithelper.presentation.repaydebt.RepayDebtViewModel = viewModel(
+                viewModelStoreOwner = backStackEntry,
+                factory = object : ViewModelProvider.Factory {
+                    override fun <T : ViewModel> create(modelClass: Class<T>): T =
+                        AppModule.createRepayDebtViewModel(repayDebtId) as T
+                }
+            )
+            RepayDebtScreen(
+                viewModel = repayViewModel,
                 onBack = { navController.popBackStack() }
             )
         }

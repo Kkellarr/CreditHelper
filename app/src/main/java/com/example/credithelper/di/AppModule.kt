@@ -19,6 +19,7 @@ import com.example.credithelper.domain.usecase.income.GetIncomesUseCase
 import com.example.credithelper.domain.usecase.income.UpdateIncomeUseCase
 import com.example.credithelper.presentation.dashboard.DashboardViewModel
 import com.example.credithelper.presentation.debtdetail.DebtDetailViewModel
+import com.example.credithelper.presentation.repaydebt.RepayDebtViewModel
 import com.example.credithelper.presentation.debts.DebtsViewModel
 import com.example.credithelper.presentation.incomedetail.IncomeDetailViewModel
 import com.example.credithelper.presentation.incomes.IncomesViewModel
@@ -64,6 +65,13 @@ object AppModule {
 
     fun createDebtDetailViewModel(debtId: Long): DebtDetailViewModel =
         DebtDetailViewModel(
+            debtId = debtId,
+            getDebtByIdUseCase = GetDebtByIdUseCase(debtRepository),
+            updateDebtUseCase = UpdateDebtUseCase(debtRepository)
+        )
+
+    fun createRepayDebtViewModel(debtId: Long): RepayDebtViewModel =
+        RepayDebtViewModel(
             debtId = debtId,
             getDebtByIdUseCase = GetDebtByIdUseCase(debtRepository),
             updateDebtUseCase = UpdateDebtUseCase(debtRepository)

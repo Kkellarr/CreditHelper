@@ -17,6 +17,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Payments
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -38,15 +39,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.credithelper.domain.model.DebtType
-import com.example.credithelper.ui.theme.Teal700
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DebtDetailScreen(
     viewModel: DebtDetailViewModel,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onNavigateToRepay: () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.dispatch(DebtDetailIntent.Load)
+    }
 
     LaunchedEffect(state.saved) {
         if (state.saved) onBack()
@@ -148,7 +153,17 @@ fun DebtDetailScreen(
                     }
                 }
 
-                Spacer(Modifier.height(24.dp))
+                Spacer(Modifier.height(16.dp))
+
+                FilledTonalButton(
+                    onClick = onNavigateToRepay,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Icon(Icons.Default.Payments, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
+                    Text("Погасить кредит")
+                }
+
+                Spacer(Modifier.height(16.dp))
 
                 FilledTonalButton(
                     onClick = { viewModel.dispatch(DebtDetailIntent.Save) },
